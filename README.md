@@ -15,7 +15,7 @@ Sumario
       * [Declaração das variáveis](#declaracao-das-variaveis)
       * [void setup](#void-setup)
          * [Definição das variáveis e pinos](#definicao-das-variaveis-e-pinos)
-         * [Apresentação inicial e animada](#apresentacao-inicial-e-animada]
+         * [Apresentação inicial e animada no LCD](#apresentacao-inicial-e-animada-no-lcd]
       * [void loop](#void-loop)
          * [Medição da temperatura](#medicao-da-temperatura)
          * [Tratamento da Estabilidade](#tratamento-da-estabilidade)
@@ -436,8 +436,8 @@ void setup()
 
 
 
-Apresentacao inicial e animada
--------------------------------
+Apresentacao inicial e animada no lcd:
+-------------------------------------
 
 ```c++
 
@@ -466,7 +466,7 @@ for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){
 } 
 
 ```
-  Apenas uma animação inicial em que é mostrado nome da equipe. Lembra como se fosse um arquivo se carregando.
+  Apenas uma animação em que é mostrado nome da equipe. Lembra como se fosse um arquivo se carregando.
   
   
 
