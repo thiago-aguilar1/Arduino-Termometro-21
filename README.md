@@ -6,26 +6,26 @@ Sumario
 
 <!--ts-->
 
-   * [Sumario](#sumario)
+   * [Sumário](#sumario)
    * [Componentes Utilizados](#componentes-utilizados)
    * [Sobre o Trabalho](#sobre-o-trabalho)
-   * [Notas sobre a logica envolvida](#notas-sobre-a-logica-envolvida)
-   * [O Codigo](#o-codigo)
-   * [Analisando o codigo](#analisando-o-codigo)
-      * [Declaracao das variaveis](#declaracao-das-variaveis)
+   * [Notas sobre a lógica envolvida](#notas-sobre-a-logica-envolvida)
+   * [O Código](#o-codigo)
+   * [Analisando o código](#analisando-o-codigo)
+      * [Declaração das variáveis](#declaracao-das-variaveis)
       * [void setup](#void-setup)
-         * [Definicao das variaveis e pinos](#definicao-das-variaveis-e-pinos)
-         * [Apresentacao inicial e animada no LCD](#apresentacao-inicial-e-animada-no-lcd]
+         * [Definição das variáveis e pinos](#definicao-das-variaveis-e-pinos)
+         * [Apresentação inicial e animada](#apresentacao-inicial-e-animada]
       * [void loop](#void-loop)
-         * [Medicao da temperatura](#medicao-da-temperatura)
+         * [Medição da temperatura](#medicao-da-temperatura)
          * [Tratamento da Estabilidade](#tratamento-da-estabilidade)
             * [1 Verificação de possivel histerese](#1-verificacao-de-possivel-histerese)
-            * [2 Validacao de presenca de histerese e aprovacao de estabilidade:](#2-validacao-de-presenca-de-histerese-e-aprovacao-de-estabilidade)
-            * [3 Validacao de estabilildade:](#3-validacao-de-estabilildade)
-         * [Atualizacao das maiores e menos temperaturas](#atualizacao-das-maiores-e-menos-temperaturas)
+            * [2 Validação de presença de histerese e aprovação de estabilidade:](#2-validacao-de-presenca-de-histerese-e-aprovacao-de-estabilidade)
+            * [3 Validação de estabilildade:](#3-validacao-de-estabilildade)
+         * [Atualização das maiores e menos temperaturas](#atualizacao-das-maiores-e-menos-temperaturas)
          * [Tratamento da buzina e do LED](#tratamento-da-buzina-e-do-led)
-         * [Impressao e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
-         * [Logica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
+         * [Impressão e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
+         * [Lágica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
 
          
 <!--te-->
@@ -75,7 +75,7 @@ Notas sobre a logica envolvida
   
   
 
-O Codigo
+O Código
 ========
 
 ```c++
@@ -334,7 +334,7 @@ else velocidadeLinhaInferior--;
  
 
 
-Declaracao das variaveis
+Declaração das variáveis
 ------------------------
 
 ```c++
@@ -395,7 +395,7 @@ void setup
 
 
 
-Definicao das variaveis e pinos:
+Definição das variáveis e pinos:
 --------------------------------
 
  
@@ -436,7 +436,7 @@ void setup()
 
 
 
-Apresentacao inicial e animada no LCD:
+Apresentação inicial e animada no LCD:
 --------------------------------------
 
 ```c++
@@ -512,7 +512,7 @@ Tratamento da Estabilidade
 
 
 
-1 Verificacao de possivel histerese:
+1 Verificação de possível histerese:
 -------------------------------------
 
 ```c++
