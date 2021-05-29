@@ -15,11 +15,11 @@ Sumario
       * [Declaração das variáveis](#declaracao-das-variaveis)
       * [void setup](#void-setup)
          * [Definição das variáveis e pinos](#definicao-das-variaveis-e-pinos)
-         * [Apresentação inicial e animada no LCD](#apresentacao-inicial-e-animada-no-lcd]
+         * [Apresentação inicial e animada no LCD](#apresentacao-inicial-e-animada-no-lcd)
       * [void loop](#void-loop)
          * [Medição da temperatura](#medicao-da-temperatura)
          * [Tratamento da Estabilidade](#tratamento-da-estabilidade)
-            * [1 Verificação de possivel histerese](#1-verificacao-de-possivel-histerese)
+            * [1 Verificação de possivel histerese:](#1-verificacao-de-possivel-histerese)
             * [2 Validação de presença de histerese e aprovação de estabilidade:](#2-validacao-de-presenca-de-histerese-e-aprovacao-de-estabilidade)
             * [3 Validação de estabilildade:](#3-validacao-de-estabilildade)
          * [Atualização da maior e menor temperatura](#atualizacao-da-maior-e-menor-temperatura)
@@ -430,14 +430,17 @@ void setup()
 ```
   Aqui foi finalmente criado os 3 caracteres customizados. Lembrando que caracteres customizados *não são impressos* no LCD (como os tradicionais números e letras). Eles *são escritos* no LCD, para que assim eles possam aparecer no display. 
 
+Voltar para o [Sumario](#sumario)?
 
 
 
 
 
 
-Apresentacao inicial e animada no lcd:
--------------------------------------
+
+Apresentacao inicial e animada no LCD:
+--------------------------------------
+
 
 ```c++
 
@@ -466,9 +469,11 @@ for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){
 } 
 
 ```
-  Apenas uma animação em que é mostrado nome da equipe. Lembra como se fosse um arquivo se carregando.
+  Apenas uma animação em que é mostrado o nome da equipe. Lembra como se fosse um arquivo se carregando.
   
   
+
+Voltar para o [Sumario](#sumario)?
 
 
 
