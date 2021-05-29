@@ -1,423 +1,82 @@
-gh-md-toc
-=========
 
-gh-md-toc — is for you if you **want to generate TOC** for README.md or
-GitHub's wiki page and **don't want to install any additional software**.
 
-It's my try to fix a problem:
-
-  * [github/issues/215](https://github.com/isaacs/github/issues/215)
-
-gh-md-toc is able to process:
-
-  * stdin
-  * local files (markdown files in local file system)
-  * remote files (html files on github.com)
-
-gh-md-toc tested on Ubuntu, and macOS High Sierra (gh-md-toc release 0.4.9). If you want it on Windows, you
-better to use a golang based implementation:
-
-  * [github-markdown-toc.go](https://github.com/ekalinin/github-markdown-toc.go)
-
-It's more solid, reliable and with ability of a parallel processing. And
-absolutely without dependencies.
-
-[![Build Status](https://travis-ci.org/ekalinin/github-markdown-toc.svg?branch=master)](https://travis-ci.org/ekalinin/github-markdown-toc)
 
 Table of contents
 =================
 
 <!--ts-->
+
    * [gh-md-toc](#gh-md-toc)
-   * [Table of contents](#table-of-contents)
-   * [Installation](#installation)
-   * [Codigo](#codigo)
-   * [Usage](#usage)
-      * [STDIN](#stdin)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-      * [Auto insert and update TOC](#auto-insert-and-update-toc)
-      * [GitHub token](#github-token)
-      * [TOC generation with Github Actions](#toc-generation-with-github-actions)
-   * [Tests](#tests)
-   * [Dependency](#dependency)
-   * [Outro Codigo](#outro-codigo)
-   * [Docker](#docker)
-     * [Local](#local)
-     * [Public](#public)
+   * [Componentes Utilizados](#componentes-utilizados)
+   * [Sobre o Trabalho](#sobre-o-trabalho)
+   * [Notas sobre a logica envolvida](#notas-sobre-a-logica-envolvida)
+   * [O Codigo](#o-codigo)
+   * [Analisando o codigo](#analisando-o-codigo)
+      * [Declaracao das variaveis](#declaracao-das-variaveis)
+      * [void setup](#void-setup)
+         * [Definicao das variaveis e pinos:](#definicao-das-variaveis-e-pinos:)
+         * [Apresentacao inicial e animada no LCD:](#apresentacao-inicial-e-animada-no-lcd:]
+      * [void loop](#void-loop)
+         * [Medicao da temperatura:](#medicao-da-temperatura:)
+         * [Tratamento da Estabilidade](#tratamento-da-estabilidade)
+            * [1 Verificacao de possivel histerese:](#1-verificacao-de-possivel-histerese:)
+            * [2 Validacao de presenca de histerese e aprovacao de estabilidade:](#2-validacao-de-presenca de histerese e aprovacao de estabilidade:)
+            * [3 Validacao de estabilildade:](#3-validacao-de-estabilildade:)
+         * [Atualizacao das maiores e menos temperaturas](#atualizacao-das-maiores-e-menos-temperaturas)
+         * [Tratamento da buzina e do LED](#tratamento-da-buzina-e-do-led)
+         * [Impressao e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
+         * [Logica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
+
+         
 <!--te-->
 
 
-Installation
-============
 
-Linux (manual installation)
-```bash
-$ wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
-$ chmod a+x gh-md-toc
-```
+Componentes utilizados:
+=======================
 
-MacOS (manual installation)
-```bash
-$ curl https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc -o gh-md-toc
-$ chmod a+x gh-md-toc
-```
 
-Linux or MacOS (using [Basher](https://github.com/basherpm/basher))
-```bash
-$ basher install ekalinin/github-markdown-toc
-# `gh-md-toc` will automatically be available in the PATH
-```
+1. Placa Arduino Uno;
+2. Display LCD 16x2 verde;
+3. Módulo I2C;
+4. Sensor de temperatura LM35;
+5. Módulo buzzer;
+6. LED RGB.
 
 
-Codigo
-======
+Sobre o trabalho
+================
 
-Vendo se funciona o edição aqui.
+* Temperatura deve ser apresentada com duas casas decimais.
+* Mostrar as temperaturas máximas e mínimas registradas assim que o projeto de termômetro for ligado.
+* Buzina deve acionar quando o termômetro detectar uma temperatura fora de uma **faixa de controle**.
+* A faixa de controle está entre 25.20°C e 32.60°C.
 
 
-Usage
-=====
 
 
-STDIN
------
 
-Here's an example of TOC creating for markdown from STDIN:
+Notas sobre a logica envolvida
+==============================
 
-```bash
-➥ cat ~/projects/Dockerfile.vim/README.md | ./gh-md-toc -
-  * [Dockerfile.vim](#dockerfilevim)
-  * [Screenshot](#screenshot)
-  * [Installation](#installation)
-        * [OR using Pathogen:](#or-using-pathogen)
-        * [OR using Vundle:](#or-using-vundle)
-  * [License](#license)
-```
+#### Busca por estabilidade
+  Uma grande preocupação ao se fazer esse código foi a busca por estabilidade no valor apresentado. O sensor, quando diante de uma temperatura constante, envia valores correspondentes de temperatura ao Arduino com certas variações em torno de uma temperatura média. Quando o termômetro deste projeto se encontra nesta estado, que eu chamo de histere, apresenta-se a temperatura que é a maioria num conjunto de 6 últimas temperaturas coletadas, conjunto esse que é continuamente atualizado a cada iteração do void loop.
 
-Local files
------------
+#### Scroll apenas na segunda linha
+  A primeira linha do display 16x2 é usada para apresentar a temperatura atual da medida do sensor, enquanto a sedunda linha é usada para mostrar a maior e a menor temperatura já registrada desde o momento em que o projeto termômetro foi ligado. Como são usadas duas casas decimais, foi necessário a implementação de uma lógica que rolasse apenas a segunda linha do display.
+  
+#### Transição de entrada e saída
+  A buzina deverá acionarar quando o termômetro estiver fora da **faixa de controle**. Há também um LED RGB que complementa esse alerta: dentro da faixa, o LED fica verde; fora da faixa, o led fica vermelho (temperatura acima de 32.60°C) ou fica azul (temperatura abaixo de 25.20°C). Para entendimento da código, é interessane notar a diferença entre o momento em que a temperatura sai da faixa de controle (o que chamo de transição de saída) e o momento em que a temperatura entra na faixa (transição de entrada).
+  
+  
+  
+  
+  
+  
+  
 
-Here's an example of TOC creating for a local README.md:
-
-```bash
-➥ ./gh-md-toc ~/projects/Dockerfile.vim/README.md
-
-
-Table of Contents
-=================
-
-  * [Dockerfile.vim](#dockerfilevim)
-  * [Screenshot](#screenshot)
-  * [Installation](#installation)
-        * [OR using Pathogen:](#or-using-pathogen)
-        * [OR using Vundle:](#or-using-vundle)
-  * [License](#license)
-```
-
-Remote files
-------------
-
-And here's an example, when you have a README.md like this:
-
-  * [README.md without TOC](https://github.com/ekalinin/envirius/blob/f939d3b6882bfb6ecb28ef7b6e62862f934ba945/README.md)
-
-And you want to generate TOC for it.
-
-There is nothing easier:
-
-```bash
-➥ ./gh-md-toc https://github.com/ekalinin/envirius/blob/master/README.md
-
-Table of Contents
-=================
-
-  * [envirius](#envirius)
-    * [Idea](#idea)
-    * [Features](#features)
-  * [Installation](#installation)
-  * [Uninstallation](#uninstallation)
-  * [Available plugins](#available-plugins)
-  * [Usage](#usage)
-    * [Check available plugins](#check-available-plugins)
-    * [Check available versions for each plugin](#check-available-versions-for-each-plugin)
-    * [Create an environment](#create-an-environment)
-    * [Activate/deactivate environment](#activatedeactivate-environment)
-      * [Activating in a new shell](#activating-in-a-new-shell)
-      * [Activating in the same shell](#activating-in-the-same-shell)
-    * [Get list of environments](#get-list-of-environments)
-    * [Get current activated environment](#get-current-activated-environment)
-    * [Do something in environment without enabling it](#do-something-in-environment-without-enabling-it)
-    * [Get help](#get-help)
-    * [Get help for a command](#get-help-for-a-command)
-  * [How to add a plugin?](#how-to-add-a-plugin)
-    * [Mandatory elements](#mandatory-elements)
-      * [plug_list_versions](#plug_list_versions)
-      * [plug_url_for_download](#plug_url_for_download)
-      * [plug_build](#plug_build)
-    * [Optional elements](#optional-elements)
-      * [Variables](#variables)
-      * [Functions](#functions)
-    * [Examples](#examples)
-  * [Example of the usage](#example-of-the-usage)
-  * [Dependencies](#dependencies)
-  * [Supported OS](#supported-os)
-  * [Tests](#tests)
-  * [Version History](#version-history)
-  * [License](#license)
-  * [README in another language](#readme-in-another-language)
-```
-
-That's all! Now all you need — is copy/paste result from console into original
-README.md.
-
-If you do not want to copy from console you can add `> YOURFILENAME.md` at the end of the command like `./gh-md-toc https://github.com/ekalinin/envirius/blob/master/README.md > table-of-contents.md` and this will store the table of contents to a file named table-of-contents.md in your current folder.
-
-And here is a result:
-
-  * [README.md with TOC](https://github.com/ekalinin/envirius/blob/24ea3be0d3cc03f4235fa4879bb33dc122d0ae29/README.md)
-
-Moreover, it's able to work with GitHub's wiki pages:
-
-```bash
-➥ ./gh-md-toc https://github.com/ekalinin/nodeenv/wiki/Who-Uses-Nodeenv
-
-Table of Contents
-=================
-
-  * [Who Uses Nodeenv?](#who-uses-nodeenv)
-    * [OpenStack](#openstack)
-    * [pre-commit.com](#pre-commitcom)
-```
-
-Multiple files
---------------
-
-It supports multiple files as well:
-
-```bash
-➥ ./gh-md-toc \
-    https://github.com/aminb/rust-for-c/blob/master/hello_world/README.md \
-    https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md \
-    https://github.com/aminb/rust-for-c/blob/master/primitive_types_and_operators/README.md \
-    https://github.com/aminb/rust-for-c/blob/master/unique_pointers/README.md
-
-  * [Hello world](https://github.com/aminb/rust-for-c/blob/master/hello_world/README.md#hello-world)
-
-  * [Control Flow](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#control-flow)
-    * [If](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#if)
-    * [Loops](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#loops)
-    * [For loops](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#for-loops)
-    * [Switch/Match](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#switchmatch)
-    * [Method call](https://github.com/aminb/rust-for-c/blob/master/control_flow/README.md#method-call)
-
-  * [Primitive Types and Operators](https://github.com/aminb/rust-for-c/blob/master/primitive_types_and_operators/README.md#primitive-types-and-operators)
-
-  * [Unique Pointers](https://github.com/aminb/rust-for-c/blob/master/unique_pointers/README.md#unique-pointers)
-```
-
-Combo
------
-
-You can easily combine both ways:
-
-```bash
-➥ ./gh-md-toc \
-    ~/projects/Dockerfile.vim/README.md \
-    https://github.com/ekalinin/sitemap.s/blob/master/README.md
-
-  * [Dockerfile.vim](~/projects/Dockerfile.vim/README.md#dockerfilevim)
-  * [Screenshot](~/projects/Dockerfile.vim/README.md#screenshot)
-  * [Installation](~/projects/Dockerfile.vim/README.md#installation)
-        * [OR using Pathogen:](~/projects/Dockerfile.vim/README.md#or-using-pathogen)
-        * [OR using Vundle:](~/projects/Dockerfile.vim/README.md#or-using-vundle)
-  * [License](~/projects/Dockerfile.vim/README.md#license)
-
-  * [sitemap.js](https://github.com/ekalinin/sitemap.js/blob/master/README.md#sitemapjs)
-    * [Installation](https://github.com/ekalinin/sitemap.js/blob/master/README.md#installation)
-    * [Usage](https://github.com/ekalinin/sitemap.js/blob/master/README.md#usage)
-    * [License](https://github.com/ekalinin/sitemap.js/blob/master/README.md#license)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-```
-
-Auto insert and update TOC
---------------------------
-
-Just put into a file these two lines:
-
-```
-<!--ts-->
-<!--te-->
-```
-
-And run:
-
-```bash
-$ ./gh-md-toc --insert README.test.md
-
-Table of Contents
-=================
-
-   * [gh-md-toc](#gh-md-toc)
-   * [Installation](#installation)
-   * [Usage](#usage)
-      * [STDIN](#stdin)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-   * [Tests](#tests)
-   * [Dependency](#dependency)
-
-!! TOC was added into: 'README.test.md'
-!! Origin version of the file: 'README.test.md.orig.2018-02-04_192655'
-!! TOC added into a separate file: 'README.test.md.toc.2018-02-04_192655'
-
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-```
-
-Now check the same file:
-
-```bash
-➜ grep -A15 "<\!\-\-ts" README.test.md
-<!--ts-->
-   * [gh-md-toc](#gh-md-toc)
-   * [Table of contents](#table-of-contents)
-   * [Installation](#installation)
-   * [Usage](#usage)
-      * [STDIN](#stdin)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-      * [Auto insert and update TOC](#auto-insert-and-update-toc)
-   * [Tests](#tests)
-   * [Dependency](#dependency)
-
-<!-- Added by: <your-user>, at: 2018-02-04T19:38+03:00 -->
-
-<!--te-->
-```
-
-Next time when your file will be changed just repeat the command (`./gh-md-toc
---insert ...`) and TOC will be refreshed again.
-
-GitHub token
-------------
-
-All your tokens are [here](https://github.com/settings/tokens).
-
-You will need them if you get an error like this:
-
-```
-Parsing local markdown file requires access to github API
-Error: You exceeded the hourly limit. See: https://developer.github.com/v3/#rate-limiting
-or place github auth token here: ./token.txt
-```
-
-A token can be used as an env variable:
-
-```bash
-➥ GH_TOC_TOKEN=2a2dab...563 ./gh-md-toc README.md
-
-Table of Contents
-=================
-
-* [github\-markdown\-toc](#github-markdown-toc)
-* [Table of Contents](#table-of-contents)
-* [Installation](#installation)
-* [Tests](#tests)
-* [Usage](#usage)
-* [LICENSE](#license)
-```
-
-Or from a file:
-
-```bash
-➥ echo "2a2dab...563" > ./token.txt
-➥ ./gh-md-toc README.md
-
-Table of Contents
-=================
-
-* [github\-markdown\-toc](#github-markdown-toc)
-* [Table of Contents](#table-of-contents)
-* [Installation](#installation)
-* [Tests](#tests)
-* [Usage](#usage)
-* [LICENSE](#license)
-```
-
-TOC generation with Github Actions
-----------------------------------
-
-Config:
-
-```yaml
-on:
-  push:
-    branches: [main]
-    paths: ['foo.md']
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v2
-      - run: |
-          curl https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc -o gh-md-toc
-          chmod a+x gh-md-toc
-          ./gh-md-toc --insert --no-backup foo.md
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Auto update markdown TOC
-```
-
-Tests
-=====
-
-Done with [bats](https://github.com/sstephenson/bats).
-Useful articles:
-
-  * https://blog.engineyard.com/2014/bats-test-command-line-tools
-  * http://blog.spike.cx/post/60548255435/testing-bash-scripts-with-bats
-
-
-How to run tests:
-
-```bash
-➥ make test                                                                                                                 
-
- ✓ TOC for local README.md
- ✓ TOC for remote README.md
- ✓ TOC for mixed README.md (remote/local)
- ✓ TOC for markdown from stdin
- ✓ --help
- ✓ --version
-
-6 tests, 0 failures
-```
-
-Dependency
-==========
-
-  * curl or wget
-  * awk (mawk is not tested)
-  * grep
-  * sed
-  * bats (for unit tests)
-
-Tested on Ubuntu 14.04/14.10 in bash/zsh.
-
-
-
-Outro Codigo
-============
+O Codigo
+========
 
 ```c++
 
@@ -435,46 +94,259 @@ int toneVal;
 byte grau[8] = {B00110, B01001, B00110, B00000, B00000, B00000, B00000, B00000};
 byte quadradoOco[8] = {B11111, B10001, B10001, B10001, B10001, B10001, B10001, B11111};
 byte quadradoCheio[8] = {B11111, B11111, B11111, B11111, B11111, B11111, B11111, B11111};
+  
+int colunas = 16;          /* Configuracoes LCD 16x2 */
+int linhas = 2;  
+float meiaSenoide, porcaoTempinho, tempinho;
 
-```
-Mais um teste de código. 
+float temp = 0.0;
+float temperatura[6];
+float maxTemp = -100.0, minTemp = 100.0;
+int votacao = 0;
+bool histerese = false;
+bool estavel = false;
+float tempEstavel;
+int amortecimento = 0;
+ 
+int comecoVisivel = 0;
+int corretor = 0;
+int posicaoGrauMax = 10;
+int posicaoGrauMin = 23;
+
+bool direcao = true;      /*direção do sentido do deslocamento da linha móvel (linha inferior).   */
+
+int velocidadeDisplay = 2;
+int velocidadeLinhaInferior = velocidadeDisplay;
+
+/*   ****************************************************************   void setup   **************************************************************************  
+*   ***********************************************************************************************************************************************************  */
+
+
+void setup() 
+{  
+
+  pinMode(buzina, OUTPUT);
+  digitalWrite(buzina, HIGH);    /* pois a buzina aciona em nível baixo */
+
+  pinMode(red, OUTPUT);
+  pinMode(green, OUTPUT);
+  pinMode(blue, OUTPUT);
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  digitalWrite(blue, LOW);
+
+  
+  //Inicializacao do display  
+  lcd.begin(colunas,linhas);  
+  lcd.setBacklight(HIGH);    //LIGA O BACKLIGHT (LUZ DE FUNDO).
+  lcd.createChar(1, grau);
+  lcd.createChar(2, quadradoOco);
+  lcd.createChar(3, quadradoCheio);
+
+
+   /* *****************  Apresentação inicial da equiipe no Display  ********************** */ 
+lcd.clear();
+lcd.setCursor(5, 0);
+lcd.print("AMPERE");
+
+  
+for (int i = 0; i < 16; i++){   /*coloca os quadradinhos ocos */
+  lcd.setCursor(i,1);
+  lcd.write(2);
+}
+
+
+for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){     
+  meiaSenoide = sin( float(i) * (3.1415/180.0) );
+  porcaoTempinho = 3.0 * float(meiaSenoide*255.0/2.0);
+  tempinho = 3.0 + porcaoTempinho;
+  delay(int(tempinho));
+  lcd.setCursor(j,1);
+  lcd.write(3);         /* colocando aos poucos os quadradinhos cheios */
+}
+  
+} 
+/*   ************************************************************** void loop ***********************************************************************************  
+ *    ********************************************************************************************************************************************************* */
+void loop()         
+{ 
+
+
+  temp = ( 5.0 * analogRead(lm35) * 100.0) / 1024.0;               /*  medindo temperatura   */
+  delay(300);                                                   /*  delay de tempo após cada medição de temperatura    */
+  
+
+/*  ************************************* Começa o tratamento para a estabilidade da apresentação da temperatura **********************************************  */
+
+  if(!histerese)                                /*  tratamento para uma variação rápida de temperatura.   */
+    if(temp == temperatura[0])  histerese = true;     /* o temperatura[0] é referente à medição anterior  */
+    else temperatura[0] = temp;           /*agora o temperatura[0] se referirá à temperatura atual  */
+    
+
+
+/*  ******************************   */
+
+  if(histerese){                              /* tratamento para temperatura média constante ou com variação lenta   */  
+
+    for (int i = 5; i > 0 ; i--)           /* atualizando o histórico das temperaturas sentidas pelo sensor. */
+      temperatura[i] = temperatura[i-1];
+    temperatura[0] = temp;            /*agora o temperatura[0] se referirá à temperatura atual  */
+
+
+    if(!estavel){   /* querendo entrar para estavel, ou seja, verifica a persistência do temperatura em parmenecer sempre a mesma  */
+      for (int i = 2; i <= 5 ; i++)
+        if(temperatura[i] == temp) 
+          votacao++; 
+      if(votacao >= 3){    /* ou seja, o mesmo valor está presente em 4 amostras, na amostra/medida atual, na consecutiva anterior e em alguma parte do histórico.*/
+        estavel = true;
+        tempEstavel = temp;   
+      }
+      else histerese = false;   
+      votacao = 0;
+    }
+
+    
+    
+    if (estavel){    /* aqui é o estavel, ou seja, quanto há constância no valor da temperatura. Aqui se verifica se faz sentido continuar "segurando" o valor da temperatura por um valor constante. */
+      for (int i = 1; i < 6 ; i++)                    /* aqui que traz latencia, ou seja, um certo atraso para o termômetro perceber quando não é mais válida a condição estável */ 
+        if(tempEstavel == temperatura[i]) votacao++;          /*  verifica se ainda é válida a condição de estável  */
+     
+      if(votacao >= 4) temp = tempEstavel;                /* Perceba que muda o temp (para a estabilidade), mas não muda o histórico de temperaturas registradas. A temperatura atual já foi registrada no histórico, antes de a variável temp ser modificada pelo código estabilizador. */
+      else{                                       
+        estavel = false;
+        histerese = false;
+      }
+      votacao = 0;
+    } 
+             
+  }
+ /* *****************************************************   Acabou o tratamento da estabilidade  **************************************************************  */
+
+
+
+  
+  if (temp > maxTemp) maxTemp = temp;         /*atualiza as temperaturas max e min já sentidas pelo sensor */
+  else if (temp < minTemp) minTemp = temp; 
+
+
+ 
+ 
+                 /* ***************************  aqui começa o tratamento da buzina e para o LED ***************************** */
+                 
+                 
+  if (temp > 32.60 || temp < 25.20) {      /* verifica se houve uma transição de saída */             
+
+    if( amortecimento == 0 || amortecimento == 20 ){        /* verifica se já foi passado pelo menos 16 ciclos após a última transição de entrada  */
+      for (int x = 0; x < 180; x++) {
+      //converte graus para radianos, e depois obtém o valor do seno
+      sinVal = (sin(x * (3.1416 / 180)));
+      //gera uma frequência a partir do valor do seno
+      toneVal = 2000 + (int(sinVal * 1000));
+      tone(buzina, toneVal);
+      delay(2);
+    }
+    
+    if (temp > 32.6) {
+      digitalWrite(red, HIGH);
+      digitalWrite(green, LOW);
+      digitalWrite(blue, LOW);
+    }
+    else{
+      digitalWrite(red, LOW);
+      digitalWrite(green, LOW);            
+      digitalWrite(blue, HIGH);
+    }
+    amortecimento = 20;           /* esta variável "amortecimento" aqui vai me ajudar para aquele momento de transição da temperatura fora do controle para a temperatura de dentro do controle, que é quando a buzina para de tocar. O bojetivo do "amortecimento" é evitar o acionamento da buzina por um certo tempo. Neste caso, por 16 ciclos */ 
+                                  /*  gosto de dizer que esse "amortecimento = 16" é para me ajudar na transição de entrada */
+    }                                          
+    else{
+      amortecimento = 16;        /*  já o "amortecimento" aqui é para evitar o acionamento do buzer, caso haja uma transição muito recente em relação à última transição já acontecida, realimentando mais 14 ciclos para liberação da buzina.    */    
+    }                            /* ou seja, esse "amortecimento = 14" é para quando houver mais outra transição de entrada, dado que já havia acontecido outra trasição de entrada em um intervalo menor que 16 ou 14 ciclos.   */ 
+      
+  }
+  else if (amortecimento == 20) {
+    noTone(buzina);                   
+    digitalWrite(buzina, HIGH);
+    
+    digitalWrite(red, LOW);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, LOW);
+    amortecimento--;
+  }
+  else if (amortecimento > 0) amortecimento-- ;   
+  
+                             
+                                         /* *********************** aqui que termina o tratamento da buzina  **********************  */
 
 
 
 
-Docker
-======
 
-Local
------
 
-* Build
+    
+  lcd.setCursor(0, 0);                /*  É nesta linha que será apresentada a temperatura atual medida pelo sensor lm35.  */
+  lcd.print("  Temp:" + String(temp) + " C"); 
+  lcd.setCursor(12, 0);
+  lcd.write(1);  
+  
+  lcd.setCursor(0, 1);               /* Para a impressão da linha 2, a linha inferior.  */  
+  lcd.print((" Max:"+String(maxTemp)+" C  Min:"+String(minTemp)+" C ").substring(comecoVisivel));   
+  lcd.setCursor(posicaoGrauMax+corretor, 1);
+  lcd.write(1);
+  lcd.setCursor(posicaoGrauMin+corretor, 1);
+  lcd.write(1);
 
-```shell
-$ docker build -t markdown-toc-generator .
-```
 
-* Run on an URL
 
-```shell
-$ docker run -it markdown-toc-generator https://github.com/ekalinin/envirius/blob/master/README.md
-```
 
-* Run on a local file (need to share volume with docker)
 
-```shell
-$ docker run -it -v /data/ekalinin/envirius:/data markdown-toc-generator /data/README.md
-```
+if( !velocidadeLinhaInferior ){  
+  if(comecoVisivel == 10){       /* verifica se já é hora de mudar o sentido de deslocamento da linha inferior.  */
+    direcao = false;        /* troca de sentido  */
+    delay(500);
+  }
+  else if(comecoVisivel == 0){
+    direcao = true;         /* troca de sentido  */
+    delay(500);
+  }
+  
+  if(direcao){        /* tratamento para o movimento da linha inferior */             
+    comecoVisivel++;     /*atualização do início porção de 16 caracteres que serão mostrados no display  */  
+    corretor--;       /*atualização da posição dos símbolos de grau  */  
+  }
+  else{
+    comecoVisivel--;      /*atualização do início porção de 16 caracteres que serão mostrados no display  */  
+    corretor++;        /*atualização da posição dos símbolos de grau  */
+  }
+  velocidadeLinhaInferior = velocidadeDisplay;
+}
+else velocidadeLinhaInferior--;
 
-Public
--------
 
-```shell
-$ docker pull evkalinin/gh-md-toc:0.7.0
+}
 
-$ docker images | grep toc
-evkalinin/gh-md-toc                       0.7.0 0b8db6aed298        11 minutes ago      147MB
+/*  **********************************************************  Acava o void loop ***************************************************************************  * 
+ *   *********************************************************  e o programa também  ************************************************************************  */
 
-$ docker run -it evkalinin/gh-md-toc:0.7.0 \
-    https://github.com/ekalinin/envirius/blob/master/README.md
-```
+ ```
+ 
+ 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
