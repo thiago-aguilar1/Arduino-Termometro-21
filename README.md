@@ -329,7 +329,7 @@ else velocidadeLinhaInferior--;
  *   *********************************************************  e o programa também  ************************************************************************  */
 
  ```
- 
+ Voltar para o [Sumario](#sumario)?
  
  
 
@@ -385,6 +385,7 @@ int velocidadeLinhaInferior = velocidadeDisplay;
 
 
 
+Voltar para o [Sumario](#sumario)?
 
 
 
