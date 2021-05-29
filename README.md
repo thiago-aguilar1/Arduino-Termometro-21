@@ -25,7 +25,7 @@ Sumario
          * [Atualização da maior e menor temperatura](#atualizacao-da-maior-e-menor-temperatura)
          * [Tratamento da buzina e do LED](#tratamento-da-buzina-e-do-led)
          * [Impressão e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
-         * [Lágica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
+         * [Lógica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
 
          
 <!--te-->
@@ -501,8 +501,8 @@ void loop()
 ```
 Calculo simples para converter o sinal analógico do LM35 para graus Celsius.
 
-
 Voltar para o [Sumario](#sumario)?
+
 
 
 
@@ -529,12 +529,16 @@ Tratamento da Estabilidade
     if(temp == temperatura[0])  histerese = true;     /* o temperatura[0] é referente à medição anterior  */
     else temperatura[0] = temp;           /*agora o temperatura[0] se referirá à temperatura atual  */
 
-```    
-  Quando a última temperatura medida pelo lm35 for igual à temperatura medida na iteração anterior do void loop, considera-se que há uma possível histerese. 
-  Quando o sensor lm35 fica em um ambiente de temperatura constante, a temperatura fornecida pelo sensor ao arduino costuma oscilar um pouco em torno de uma temperatura central, caracterizando essa espécie de histerese térmica. Um dos valores, entre os demais durante a histerese, fornecidos pelo sensor acaba aparacendo com mais frequência, e é esse valor que se objetiva apresentar no display.
-
+``` 
+* Quando a última temperatura medida pelo lm35 for igual à temperatura medida na iteração anterior do void loop, considera-se que há uma possível histerese. 
+* Quando o sensor lm35 fica em um ambiente de temperatura constante, a temperatura fornecida pelo sensor ao arduino costuma oscilar um pouco em torno de uma temperatura central, caracterizando essa espécie de histerese térmica. Um dos valores, entre os demais durante a histerese, fornecidos pelo sensor acaba aparacendo com mais frequência, e é esse valor que se objetiva apresentar no display.
 
 Voltar para o [Sumario](#sumario)?
+
+
+
+
+
 
 
 2 Validacao de presenca de histerese e aprovacao de estabilidade:
@@ -563,12 +567,15 @@ Voltar para o [Sumario](#sumario)?
     }
 
 ```
-  Sempre que há suspeita de histerese (supeita de se estar diante de uma temperatura constante), a temperatura mensurada pelo sensor é registrada num conjunto que tem até 6 amostras de temperatura, sendo 5 delas provenientes de iterações anteriores e a primeira referente à medição presente.
-  Se houver 3 amostras iguais nesse conjunto de 6 amostras, a condição de estabilidade é aprovada **_(o grau de dificuldade para a entrada da estalidade é de 3 em 6)_**.
-  Prosseque-se então para a parte seguinte do código, já que a variável **estavel** passa a ser **true**.  
-  
 
+* Sempre que há suspeita de histerese (supeita de se estar diante de uma temperatura constante), a temperatura mensurada pelo sensor é registrada num conjunto que tem até 6 amostras de temperatura, sendo 5 delas provenientes de iterações anteriores e a primeira referente à medição presente.
+* Se houver 3 amostras iguais nesse conjunto de 6 amostras, a condição de estabilidade é aprovada **_(o grau de dificuldade para a entrada da estalidade é de 3 em 6)_**.
+* Prosseque-se então para a parte seguinte do código, já que a variável **estavel** passa a ser **true**. 
+  
   Voltar para o [Sumario](#sumario)?
+  
+  
+  
   
 3 Validacao de estabilildade:
 -----------------------------
@@ -590,10 +597,11 @@ Voltar para o [Sumario](#sumario)?
  /* *****************************************************   Acabou o tratamento da estabilidade  **************************************************************  */
 
 ```
-  Depois de entrado na estabilidade, a próxima iteração do código (próxima leitura do sensor e julgamento do valor medido) irá direto para esta região específica do código fonte. 
-  Esta região sempre faz uma conferência de validação da estabilidade. Se não houver pelo menos 4 amostras iguais num conjunto de 6 últimas amostras coletadas, a condição de estabilidade é desfeita **_(o grau de facilidade para a saída da estabilidade)_**  , o Display mostra _livremente_ a temperatura medida pelo LM35.  
+  
+    
 
-
+* Depois de entrado na estabilidade, a próxima iteração do código (próxima leitura do sensor e julgamento do valor medido) irá direto para esta região específica do código fonte. 
+* Esta região sempre faz uma conferência de validação da estabilidade. Se não houver pelo menos 4 amostras iguais num conjunto de 6 últimas amostras coletadas, a condição de estabilidade é desfeita **_(o grau de facilidade para a saída da estabilidade)_**  , o Display mostra _livremente_ a temperatura medida pelo LM35.
 
 
 Conclusão:
@@ -737,17 +745,18 @@ Impressao e escrita na tela do Display
 
 ```
 
-  Impressão da primeira e da segunda linha no Display. Lembrando que a segunda linha é móvel. 
-  Frases são impressas. Caracteres customizados são escritos.
-  A variável **comecoVisivel** é usada para indicar qual pate da frase que vai ser impressa no começo Display (da segunda linha, claro). A frase é sempre a mesma, o que muda é a porção que vai ser apresentada na tela.
-  O símbolo grau, um caractere que nós customizamos e o chamamos de **1**, é escrito na tela com auxílio da variável **corretor**, já que a linha 2 é uma linha móvel. 
-  A **posicaoGrauMax** e a **posicaoGrauMin** são as posições dos símbolos grau assim que se energiza o projeto. Seus valores são constantes.
-  Apenas as variáveis **comecoVisivel** e **corretor** é que mudam continuamente (ainda não seja no mesmo ritmo que as iterações do void loop). A variação dessas duas variáveis são regidas pelo lógica de scrolling que é explicada no tópico seguinte (na parte seguinte do código).
+* Impressão da primeira e da segunda linha no Display. Lembrando que a segunda linha é móvel. 
+* Frases são impressas. Caracteres customizados são escritos.
+* A variável **comecoVisivel** é usada para indicar qual pate da frase que vai ser impressa no começo Display (da segunda linha, claro). A frase é sempre a mesma, o que muda é a porção que vai ser apresentada na tela.
+*  O símbolo grau, um caractere que nós customizamos e o chamamos de **1**, é escrito na tela com auxílio da variável **corretor**, já que a linha 2 é uma linha móvel.
+*  A **posicaoGrauMax** e a **posicaoGrauMin** são as posições dos símbolos grau assim que se energiza o projeto. Seus valores são constantes.
+*  Apenas as variáveis **comecoVisivel** e **corretor** é que mudam continuamente (ainda não seja no mesmo ritmo que as iterações do void loop). A variação dessas duas variáveis são regidas pelo lógica de scrolling que é explicada no tópico seguinte (na parte seguinte do código).
+   
   
-
-
-
+ 
 Voltar para o [Sumario](#sumario)?
+
+
 
 
 
