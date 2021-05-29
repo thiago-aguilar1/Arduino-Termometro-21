@@ -75,7 +75,7 @@ Notas sobre a logica envolvida
   
   
 
-O Código
+O Codigo
 ========
 
 ```c++
@@ -334,7 +334,7 @@ else velocidadeLinhaInferior--;
  
 
 
-Declaração das variáveis
+Declaracao das variaveis
 ------------------------
 
 ```c++
@@ -395,7 +395,7 @@ void setup
 
 
 
-Definição das variáveis e pinos:
+Definicao das variaveis e pinos:
 --------------------------------
 
  
@@ -436,7 +436,7 @@ void setup()
 
 
 
-Apresentação inicial e animada no LCD:
+Apresentacao inicial e animada no LCD:
 --------------------------------------
 
 ```c++
