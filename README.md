@@ -22,7 +22,7 @@ Sumario
             * [1 Verificação de possivel histerese](#1-verificacao-de-possivel-histerese)
             * [2 Validação de presença de histerese e aprovação de estabilidade:](#2-validacao-de-presenca-de-histerese-e-aprovacao-de-estabilidade)
             * [3 Validação de estabilildade:](#3-validacao-de-estabilildade)
-         * [Atualização das maiores e menos temperaturas](#atualizacao-das-maiores-e-menos-temperaturas)
+         * [Atualização da maior e menor temperatura](#atualizacao-da-maior-e-menor-temperatura)
          * [Tratamento da buzina e do LED](#tratamento-da-buzina-e-do-led)
          * [Impressão e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
          * [Lágica de scrolling (rolagem) da segunda linha](#logica-de-scrolling-da-segunda-linha)
@@ -528,6 +528,7 @@ Tratamento da Estabilidade
   Quando o sensor lm35 fica em um ambiente de temperatura constante, a temperatura fornecida pelo sensor ao arduino costuma oscilar um pouco em torno de uma temperatura central, caracterizando essa espécie de histerese térmica. Um dos valores, entre os demais durante a histerese, fornecidos pelo sensor acaba aparacendo com mais frequência, e é esse valor que se objetiva apresentar no display.
 
 
+Voltar para o [Sumario](#sumario)?
 
 
 2 Validacao de presenca de histerese e aprovacao de estabilidade:
@@ -561,7 +562,7 @@ Tratamento da Estabilidade
   Prosseque-se então para a parte seguinte do código, já que a variável **estavel** passa a ser **true**.  
   
 
-  
+  Voltar para o [Sumario](#sumario)?
   
 3 Validacao de estabilildade:
 -----------------------------
@@ -608,10 +609,10 @@ Conclusão:
 
 
 
+Voltar para o [Sumario](#sumario)?
 
 
-
-Atualizacao das maiores e menos temperaturas 
+Atualizacao da maior e menor temperatura 
 ============================================
 
 ```c++
@@ -624,7 +625,7 @@ Atualizacao das maiores e menos temperaturas
 
 
 
-
+Voltar para o [Sumario](#sumario)?
 
 
 
@@ -707,7 +708,7 @@ Tratamento da buzina e do LED
 
 
 
-
+Voltar para o [Sumario](#sumario)?
 
 
 Impressao e escrita na tela do Display
@@ -740,7 +741,7 @@ Impressao e escrita na tela do Display
 
 
 
-
+Voltar para o [Sumario](#sumario)?
 
 
 
@@ -786,7 +787,7 @@ else velocidadeLinhaInferior--;
   
   
 
-
+Voltar para o [Sumario](#sumario)?
 
   
   
