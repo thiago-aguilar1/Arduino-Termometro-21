@@ -436,8 +436,8 @@ void setup()
 
 
 
-Apresentacao inicial e animada no LCD:
---------------------------------------
+Apresentacao inicial e animada
+-------------------------------
 
 ```c++
 
