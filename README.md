@@ -31,6 +31,7 @@ Table of contents
    * [gh-md-toc](#gh-md-toc)
    * [Table of contents](#table-of-contents)
    * [Installation](#installation)
+   * [Codigo](#codigo)
    * [Usage](#usage)
       * [STDIN](#stdin)
       * [Local files](#local-files)
@@ -42,6 +43,7 @@ Table of contents
       * [TOC generation with Github Actions](#toc-generation-with-github-actions)
    * [Tests](#tests)
    * [Dependency](#dependency)
+   * [Outro Codigo](#outro-codigo)
    * [Docker](#docker)
      * [Local](#local)
      * [Public](#public)
@@ -68,6 +70,13 @@ Linux or MacOS (using [Basher](https://github.com/basherpm/basher))
 $ basher install ekalinin/github-markdown-toc
 # `gh-md-toc` will automatically be available in the PATH
 ```
+
+
+Codigo
+======
+
+Vendo se funciona o edição aqui.
+
 
 Usage
 =====
@@ -404,6 +413,34 @@ Dependency
   * bats (for unit tests)
 
 Tested on Ubuntu 14.04/14.10 in bash/zsh.
+
+
+
+Outro Codigo
+============
+
+```c++
+
+#include <Wire.h>  
+#include <LiquidCrystal_I2C.h>   
+
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  //ENDEREÇO DO I2C E DEMAIS INFORMAÇÕES
+const int lm35 = A2;
+const int red = 2;
+const int green = 3;
+const int blue = 4;
+const int buzina = 8;
+float sinVal;              /* variáveis que auxiliarão no cálculo da senoida da buzina */
+int toneVal;
+byte grau[8] = {B00110, B01001, B00110, B00000, B00000, B00000, B00000, B00000};
+byte quadradoOco[8] = {B11111, B10001, B10001, B10001, B10001, B10001, B10001, B11111};
+byte quadradoCheio[8] = {B11111, B11111, B11111, B11111, B11111, B11111, B11111, B11111};
+
+```
+Mais um teste de código. 
+
+
+
 
 Docker
 ======
