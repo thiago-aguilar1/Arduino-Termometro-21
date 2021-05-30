@@ -342,12 +342,14 @@ else velocidadeLinhaInferior--;
  *   *********************************************************  e o programa também  ************************************************************************  */
 
  ```
- Voltar para o [Sumario](#sumario)?
+
  
  
 
 ![Foto mais proxima do display](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/display-circuito.jpeg)
 
+
+ Voltar para o [Sumario](#sumario)?
 
  
 Analisando o codigo
