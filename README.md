@@ -31,6 +31,8 @@ Sumario
 <!--te-->
 
 
+![Foto do circuito sem embalagem](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/foto-circuito.jpeg)
+
 
 Componentes utilizados:
 =======================
@@ -54,6 +56,8 @@ Sobre o trabalho
 
 
 
+Voltar para o [Sumario](#sumario)?
+
 
 
 Notas sobre a logica envolvida
@@ -69,6 +73,9 @@ Notas sobre a logica envolvida
   A buzina deverá acionarar quando o termômetro estiver fora da **faixa de controle**. Há também um LED RGB que complementa esse alerta: dentro da faixa, o LED fica verde; fora da faixa, o led fica vermelho (temperatura acima de 32.60°C) ou fica azul (temperatura abaixo de 25.20°C). Para entendimento da código, é interessane notar a diferença entre o momento em que a temperatura sai da faixa de controle (o que chamo de transição de saída) e o momento em que a temperatura entra na faixa (transição de entrada).
   
   
+  
+
+Voltar para o [Sumario](#sumario)?
   
   
   
@@ -333,6 +340,12 @@ else velocidadeLinhaInferior--;
  
  
 
+![Foto mais proxima do display](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/display-circuito.jpeg)
+
+
+ 
+Analisando o codigo
+===================
 
 Declaracao das variaveis
 ------------------------
