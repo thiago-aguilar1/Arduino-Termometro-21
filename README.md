@@ -32,6 +32,7 @@ Sumario
 
 
 ![Foto do circuito sem embalagem](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/foto-circuito.jpeg)
+![Display funcionamento](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Funcionando.gif)
 
 
 Componentes utilizados:
@@ -44,6 +45,11 @@ Componentes utilizados:
 4. Sensor de temperatura LM35;
 5. Módulo buzzer;
 6. LED RGB.
+
+
+![Esquema de ligação](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Componentes.jpeg)
+
+Voltar para o [Sumario](#sumario)?
 
 
 Sobre o trabalho
@@ -485,7 +491,7 @@ for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){
 ```
   Apenas uma animação em que é mostrado o nome da equipe. Lembra como se fosse um arquivo se carregando.
   
-  
+![Animação Inicial](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Display-apresentacao.gif)
 
 Voltar para o [Sumario](#sumario)?
 
@@ -634,6 +640,7 @@ Conclusão:
   Caso se queira eliminar esse *charme*, basta dificultar **_ o grau de facilidade para a saída da estabilidade _** (ao invez de se exigir 4 amostras iguais, exige-se apenas 2 amostras coincidentes como condição de continuação de estabilidade, "segurando" o valor no display por mais tempo). 
 
 
+![display](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/display-circuito.jpeg)
 
 
 Voltar para o [Sumario](#sumario)?
@@ -734,8 +741,11 @@ Tratamento da buzina e do LED
 * Quando acontece uma _transição de entrada_ (desligando a buzina e mudando a cor do LED), é necessário aguardar 20 iterações ( do void loop para se liberar o acionamento da buzina (e do LED). Caso ocorra uma _trancição de saída_ antes das 20 iterações, impõe-se uma nova espera de 16 iterações. Se ocorrer outra _transição de saída_ antes da espera imposta, a espera é renovada com o 16 iterações; e assim por diante.
 
 
+![Ferro de solda](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Ferro-de-Solda-teste.gif)
+![Gelo](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Gelo-teste.gif)
 
 Voltar para o [Sumario](#sumario)?
+
 
 
 Impressao e escrita na tela do Display
