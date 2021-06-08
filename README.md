@@ -22,6 +22,7 @@ Sumario
             * [1 Verificação de possivel histerese:](#1-verificacao-de-possivel-histerese)
             * [2 Validação de presença de histerese e aprovação de estabilidade:](#2-validacao-de-presenca-de-histerese-e-aprovacao-de-estabilidade)
             * [3 Validação de estabilildade:](#3-validacao-de-estabilildade)
+         * [Calibracao](#calibracao)
          * [Atualização da maior e menor temperatura](#atualizacao-da-maior-e-menor-temperatura)
          * [Tratamento da buzina e do LED](#tratamento-da-buzina-e-do-led)
          * [Impressão e escrita na tela do Display](#impressao-e-escrita-na-tela-do-display)
@@ -93,6 +94,7 @@ O Codigo
 
 ```c++
 
+
 #include <Wire.h>  
 #include <LiquidCrystal_I2C.h>   
 
@@ -120,6 +122,13 @@ bool histerese = false;
 bool estavel = false;
 float tempEstavel;
 int amortecimento = 0;
+
+
+float calibracao=0.0;
+float ajuste = 0.0;
+const int botaoYellow = 7;
+const int botaoRed = 6;
+
  
 int comecoVisivel = 0;
 int corretor = 0;
@@ -137,7 +146,9 @@ int velocidadeLinhaInferior = velocidadeDisplay;
 
 void setup() 
 {  
-
+  pinMode(botaoYellow, INPUT_PULLUP);
+  pinMode(botaoRed, INPUT_PULLUP);
+  
   pinMode(buzina, OUTPUT);
   digitalWrite(buzina, HIGH);    /* pois a buzina aciona em nível baixo */
 
@@ -147,7 +158,7 @@ void setup()
   digitalWrite(red, LOW);
   digitalWrite(green, HIGH);
   digitalWrite(blue, LOW);
-
+  
   
   //Inicializacao do display  
   lcd.begin(colunas,linhas);  
@@ -169,7 +180,7 @@ for (int i = 0; i < 16; i++){   /*coloca os quadradinhos ocos */
 }
 
 
-for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){     
+for (int i = 0, j = 0; i <= 90 && j <= 15 ; i+= 6, j++){     
   meiaSenoide = sin( float(i) * (3.1415/180.0) );
   porcaoTempinho = 3.0 * float(meiaSenoide*255.0/2.0);
   tempinho = 3.0 + porcaoTempinho;
@@ -224,7 +235,7 @@ void loop()
       for (int i = 1; i < 6 ; i++)                    /* aqui que traz latencia, ou seja, um certo atraso para o termômetro perceber quando não é mais válida a condição estável */ 
         if(tempEstavel == temperatura[i]) votacao++;          /*  verifica se ainda é válida a condição de estável  */
      
-      if(votacao >= 4) temp = tempEstavel;                /* Perceba que muda o temp (para a estabilidade), mas não muda o histórico de temperaturas registradas. A temperatura atual já foi registrada no histórico, antes de a variável temp ser modificada pelo código estabilizador. */
+      if(votacao >= 2) temp = tempEstavel;                /* Perceba que muda o temp (para a estabilidade), mas não muda o histórico de temperaturas registradas. A temperatura atual já foi registrada no histórico, antes de a variável temp ser modificada pelo código estabilizador. */
       else{                                       
         estavel = false;
         histerese = false;
@@ -237,15 +248,48 @@ void loop()
 
 
 
-  
+
+
+
+                                        /* =========== calibração da medida do valor que será apresentado ===========  */
+
+   if( (digitalRead(botaoYellow)==LOW) ){
+    
+    ajuste = !ajuste; 
+    digitalWrite(red, HIGH);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, HIGH);
+    delay(300);
+    digitalWrite(red, LOW);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, LOW);
+
+    calibracao += 0.01;
+  }
+  if( (digitalRead(botaoRed)==LOW ) ){
+    
+    ajuste = !ajuste; 
+    digitalWrite(red, HIGH);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, HIGH);
+    delay(300);
+    digitalWrite(red, LOW);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, LOW);
+
+    calibracao -= 0.01;
+  }
+     
+ 
+  temp = temp + calibracao;
+
+
   if (temp > maxTemp) maxTemp = temp;         /*atualiza as temperaturas max e min já sentidas pelo sensor */
   else if (temp < minTemp) minTemp = temp; 
 
 
  
- 
-                 /* ***************************  aqui começa o tratamento da buzina e para o LED ***************************** */
-                 
+                 /* ************  aqui começa o tratamento da buzina e para o LED ************ */
                  
   if (temp > 32.60 || temp < 25.20) {      /* verifica se houve uma transição de saída */             
 
@@ -286,10 +330,7 @@ void loop()
     digitalWrite(blue, LOW);
     amortecimento--;
   }
-  else if (amortecimento > 0) amortecimento-- ;   
-  
-                             
-                                         /* *********************** aqui que termina o tratamento da buzina  **********************  */
+  else if (amortecimento > 0) amortecimento-- ;    /* ********** aqui que termina o tratamento da buzina  *************  */
 
 
 
@@ -302,14 +343,12 @@ void loop()
   lcd.setCursor(12, 0);
   lcd.write(1);  
   
-  lcd.setCursor(0, 1);               /* Para a impressão da linha 2, a linha inferior.  */  
+  lcd.setCursor(0, 1);               /* Para a mpressão da linha 2, a linha inferior.  */  
   lcd.print((" Max:"+String(maxTemp)+" C  Min:"+String(minTemp)+" C ").substring(comecoVisivel));   
   lcd.setCursor(posicaoGrauMax+corretor, 1);
   lcd.write(1);
   lcd.setCursor(posicaoGrauMin+corretor, 1);
   lcd.write(1);
-
-
 
 
 
@@ -341,6 +380,10 @@ else velocidadeLinhaInferior--;
 /*  **********************************************************  Acava o void loop ***************************************************************************  * 
  *   *********************************************************  e o programa também  ************************************************************************  */
 
+
+ 
+
+
  ```
 
  
@@ -359,7 +402,6 @@ Declaracao das variaveis
 ------------------------
 
 ```c++
-
 #include <Wire.h>  
 #include <LiquidCrystal_I2C.h>   
 
@@ -387,6 +429,13 @@ bool histerese = false;
 bool estavel = false;
 float tempEstavel;
 int amortecimento = 0;
+
+
+float calibracao=0.0;
+float ajuste = 0.0;
+const int botaoYellow = 7;
+const int botaoRed = 6;
+
  
 int comecoVisivel = 0;
 int corretor = 0;
@@ -423,13 +472,16 @@ Definicao das variaveis e pinos:
  
 ```c++
 
+
 /*   ****************************************************************   void setup   **************************************************************************  
 *   ***********************************************************************************************************************************************************  */
 
 
 void setup() 
 {  
-
+  pinMode(botaoYellow, INPUT_PULLUP);
+  pinMode(botaoRed, INPUT_PULLUP);
+  
   pinMode(buzina, OUTPUT);
   digitalWrite(buzina, HIGH);    /* pois a buzina aciona em nível baixo */
 
@@ -439,14 +491,14 @@ void setup()
   digitalWrite(red, LOW);
   digitalWrite(green, HIGH);
   digitalWrite(blue, LOW);
-
+  
   
   //Inicializacao do display  
   lcd.begin(colunas,linhas);  
   lcd.setBacklight(HIGH);    //LIGA O BACKLIGHT (LUZ DE FUNDO).
-  lcd.createChar(1, grau);              /* caractere customizado grau criado. Será chamado, na perspectiva do LCD, de 1. */
-  lcd.createChar(2, quadradoOco);        /* carctere customizado com forma de quadrado oco criado. Será chamado, na perspectiva do LCD, de 2. */
-  lcd.createChar(3, quadradoCheio);         /* carctere customizado com forma de quadrado cheio criado. Será chamado, na perspectiva do LCD, de 3. */
+  lcd.createChar(1, grau);
+  lcd.createChar(2, quadradoOco);
+  lcd.createChar(3, quadradoCheio);
   
 
 ```
@@ -479,7 +531,7 @@ for (int i = 0; i < 16; i++){   /*coloca os quadradinhos ocos */
 }
 
 
-for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){     
+for (int i = 0, j = 0; i <= 90 && j <= 15 ; i+= 6, j++){     
   meiaSenoide = sin( float(i) * (3.1415/180.0) );
   porcaoTempinho = 3.0 * float(meiaSenoide*255.0/2.0);
   tempinho = 3.0 + porcaoTempinho;
@@ -493,7 +545,7 @@ for (int i = 0, j = 15; i <= 90 && j >= 0 ; i+= 6, j--){
 ```
   Apenas uma animação em que é mostrado o nome da equipe. Lembra como se fosse um arquivo se carregando.
   
-![Animação Inicial](https://github.com/thiago-aguilar1/Arduino-Termometro-21/blob/master/Display-apresentacao.gif)
+
 
 Voltar para o [Sumario](#sumario)?
 
@@ -646,6 +698,53 @@ Conclusão:
 
 
 Voltar para o [Sumario](#sumario)?
+
+
+Calibracao
+==========
+
+```c++
+
+
+                                        /* =========== calibração da medida do valor que será apresentado ===========  */
+
+   if( (digitalRead(botaoYellow)==LOW) ){
+    
+    ajuste = !ajuste; 
+    digitalWrite(red, HIGH);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, HIGH);
+    delay(300);
+    digitalWrite(red, LOW);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, LOW);
+
+    calibracao += 0.01;
+  }
+  if( (digitalRead(botaoRed)==LOW ) ){
+    
+    ajuste = !ajuste; 
+    digitalWrite(red, HIGH);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, HIGH);
+    delay(300);
+    digitalWrite(red, LOW);
+    digitalWrite(green, HIGH);
+    digitalWrite(blue, LOW);
+
+    calibracao -= 0.01;
+  }
+     
+ 
+  temp = temp + calibracao;
+  
+```
+
+O botão amarelo incrementa um centésimo a cada acionamento, ao passo que e o botão vermelho decrementa na mesma taxa.
+
+
+Voltar para o [Sumario](#sumario)?
+
 
 
 Atualizacao da maior e menor temperatura 
